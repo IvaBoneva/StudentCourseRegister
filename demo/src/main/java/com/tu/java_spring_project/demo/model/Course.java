@@ -48,4 +48,8 @@ public class Course {
     // One Course -> Many Enrollments
     @OneToMany(mappedBy = "course")
     private List<Enrollment> enrollments;
+
+    public String getName() {
+        return this.courseName;
+    }
 }
