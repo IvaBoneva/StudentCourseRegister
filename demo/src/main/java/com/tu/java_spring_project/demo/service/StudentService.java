@@ -44,5 +44,27 @@ public class StudentService {
         return studentMapper.toStudentResponseDto(saved);
     }
 
+    @Transactional
+    public StudentResponseDto updateStudent(Long id, StudentRequestDto dto) {
+        Student existing = studentRepo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Student not found with id " + id));
+
+        existing.setFirstName(dto.firstName());
+        existing.setLastName(dto.lastName());
+        existing.setFacultyNumber(dto.facultyNumber());
+        existing.setEmail(dto.email());
+        existing.setAcademicYear(dto.academicYear());
+
+        Student updated = studentRepo.save(existing);
+        return studentMapper.toStudentResponseDto(updated);
+    }
+
+    @Transactional
+    public void deleteStudent(Long id) {
+        if (!studentRepo.existsById(id)) {
+            throw new NoSuchElementException("Student not found with id " + id);
+        }
+        studentRepo.deleteById(id);
+    }
 
 }

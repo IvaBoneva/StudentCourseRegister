@@ -35,4 +35,20 @@ public class StudentController {
         StudentResponseDto saved = studentService.saveStudent(dto);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
+
+    // PUT /api/students/{id}
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentResponseDto> updateStudent(
+            @PathVariable Long id,
+            @RequestBody StudentRequestDto dto) {
+        StudentResponseDto updated = studentService.updateStudent(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    // DELETE /api/students/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+        return ResponseEntity.noContent().build();
+    }
 }
