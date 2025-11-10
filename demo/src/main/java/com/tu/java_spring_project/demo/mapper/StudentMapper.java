@@ -18,12 +18,15 @@ public interface StudentMapper {
     @Mapping(target = "enrollmentIds", source = "enrollments")
     @Mapping(target = "courseNames", source = "enrollments")
     StudentResponseDto toStudentResponseDto(Student student);
+
     Student toStudent(StudentRequestDto studentRequestDto);
+    List<StudentResponseDto> toStudentResponseDtoList(List<Student> students);
+
 
 
     // Спомагателни методи – MapStruct ги извиква автоматично
     // Мапване на enrollment → enrollmentId
-    default List<Long> mapEnrollmentsToIds(List<Enrollment> enrollments) {
+    default List<Long> mapEnrollmentsToEnrollmentIds(List<Enrollment> enrollments) {
         if (enrollments == null) return null;
         return enrollments.stream()
                 .map(Enrollment::getId)

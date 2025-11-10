@@ -18,6 +18,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
+    // GET /api/students
     @GetMapping
     public List<StudentResponseDto> getAllStudents() {
         return studentService.getAllStudents();
@@ -42,7 +43,7 @@ public class StudentController {
             @PathVariable Long id,
             @RequestBody StudentRequestDto dto) {
         StudentResponseDto updated = studentService.updateStudent(id, dto);
-        return ResponseEntity.ok(updated);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
     // DELETE /api/students/{id}

@@ -22,11 +22,9 @@ public class StudentService {
     private final StudentRepo studentRepo;
     private final StudentMapper studentMapper;
 
+    // Връща лист с всички студенти
     public List<StudentResponseDto> getAllStudents() {
-        return studentRepo.findAll()
-                .stream()
-                .map(studentMapper::toStudentResponseDto) // MapStruct мапва entity → DTO
-                .collect(Collectors.toList());
+        return studentMapper.toStudentResponseDtoList(studentRepo.findAll());
     }
 
     // Връща студент по id
@@ -36,6 +34,7 @@ public class StudentService {
         return studentMapper.toStudentResponseDto(student);
     }
 
+    // Създава и запазва студент
     @Transactional
     public StudentResponseDto saveStudent(StudentRequestDto dto) {
         Student student = studentMapper.toStudent(dto);
@@ -44,6 +43,7 @@ public class StudentService {
         return studentMapper.toStudentResponseDto(saved);
     }
 
+    // Редактира студент по id
     @Transactional
     public StudentResponseDto updateStudent(Long id, StudentRequestDto dto) {
         Student existing = studentRepo.findById(id)
@@ -59,6 +59,7 @@ public class StudentService {
         return studentMapper.toStudentResponseDto(updated);
     }
 
+    // Трие студент по id
     @Transactional
     public void deleteStudent(Long id) {
         if (!studentRepo.existsById(id)) {
