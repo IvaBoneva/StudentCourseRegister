@@ -2,7 +2,6 @@ package com.tu.java_spring_project.demo.controller;
 
 import com.tu.java_spring_project.demo.dto.StudentRequestDto;
 import com.tu.java_spring_project.demo.dto.StudentResponseDto;
-import com.tu.java_spring_project.demo.model.Student;
 import com.tu.java_spring_project.demo.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
