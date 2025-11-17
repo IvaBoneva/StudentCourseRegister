@@ -60,6 +60,10 @@ public class CourseService {
         Course existing = courseRepo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Course not found with id " + id));
 
+        Room room = roomRepo.findById(dto.roomId())
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+        existing.setRoom(room);
+
         existing.setCourseName(dto.courseName());
         existing.setCredits(dto.credits());
 
