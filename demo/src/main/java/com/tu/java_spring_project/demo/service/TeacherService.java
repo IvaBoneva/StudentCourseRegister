@@ -40,11 +40,11 @@ public class TeacherService {
     @Transactional
     public TeacherResponseDto saveTeacher(TeacherRequestDto dto) {
         Teacher teacher = teacherMapper.toTeacher(dto);
-        teacher.setCourses(new ArrayList<>());
-        teacher.setEnrollments(new ArrayList<>());
+        teacher.setEnrollments(new ArrayList<>()); // празен списък от enrollments
         Teacher saved = teacherRepo.save(teacher);
         return teacherMapper.toTeacherResponseDto(saved);
     }
+
 
     // Редактира учител по id
     @Transactional

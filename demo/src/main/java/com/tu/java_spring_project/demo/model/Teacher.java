@@ -5,33 +5,30 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity // to save class in DB
-@Table(name = "teachers") // table in DB
-@Data // auto-generated getters, setters, constructors and some methods
-@NoArgsConstructor // empty constructor
+@Entity
+@Table(name = "teachers")
+@Data
+@NoArgsConstructor
 public class Teacher {
-    @Id // primary key
+    @Id
     @Column(name = "teacher_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY) // in JSON response, but not in POST / PUT
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    @Column(name = "first_name", nullable = false) // column in DB, can't be null
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false) // column in DB, can't be null
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    // One Course -> Many Teachers; One Teacher -> Many Courses
-    @ManyToMany(mappedBy = "teachers") // teachers в Course е собственик на връзката,
-    private List<Course> courses;      // т.е. course_teachers join таблицата се дефинира там
-
     // One Teacher -> Many Enrollments
     @OneToMany(mappedBy = "teacher")
-    private List<Enrollment> enrollments;
+    private List<Enrollment> enrollments = new ArrayList<>();
 }

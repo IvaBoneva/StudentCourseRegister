@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-26T20:44:30+0200",
+    date = "2025-12-21T23:22:08+0200",
     comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.16 (Eclipse Adoptium)"
 )
 @Component
@@ -28,7 +28,7 @@ public class TeacherMapperImpl implements TeacherMapper {
         String lastName = null;
         String email = null;
 
-        courseNames = mapCoursesToCourseNames( teacher.getCourses() );
+        courseNames = mapEnrollmentsToCourseNames( teacher.getEnrollments() );
         id = teacher.getId();
         firstName = teacher.getFirstName();
         lastName = teacher.getLastName();
