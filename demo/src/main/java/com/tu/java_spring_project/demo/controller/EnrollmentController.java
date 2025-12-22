@@ -1,4 +1,5 @@
 package com.tu.java_spring_project.demo.controller;
+
 import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
 import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.service.EnrollmentService;
@@ -16,28 +17,22 @@ public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
 
-    // Създаване на Enrollment
     @PostMapping("/save")
     public ResponseEntity<EnrollmentResponseDto> createEnrollment(
             @RequestBody EnrollmentRequestDto dto) {
-        EnrollmentResponseDto response = enrollmentService.createEnrollment(dto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                enrollmentService.createEnrollment(dto),
+                HttpStatus.CREATED
+        );
     }
 
-    // Получаване на всички Enrollment-и
     @GetMapping
     public ResponseEntity<List<EnrollmentResponseDto>> getAllEnrollments() {
-        List<EnrollmentResponseDto> enrollments = enrollmentService.getAllEnrollments();
-        return ResponseEntity.ok(enrollments);
+        return ResponseEntity.ok(enrollmentService.getAllEnrollments());
     }
 
-    // Получаване на Enrollment по id
     @GetMapping("/{id}")
     public ResponseEntity<EnrollmentResponseDto> getEnrollmentById(@PathVariable Long id) {
-        EnrollmentResponseDto enrollment = enrollmentService.getEnrollmentById(id);
-        return ResponseEntity.ok(enrollment);
+        return ResponseEntity.ok(enrollmentService.getEnrollmentById(id));
     }
-
-
 }
-

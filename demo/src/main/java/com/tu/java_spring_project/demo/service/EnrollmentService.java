@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,42 +21,44 @@ public class EnrollmentService {
     private final CourseRepo courseRepo;
     private final TeacherRepo teacherRepo;
     private final GradeRepo gradeRepo;
-    private final EnrollmentMapper enrollmentMapper;  // инжектиран Mapper
+    private final EnrollmentMapper enrollmentMapper;
 
-    // Създаване на Enrollment
     public EnrollmentResponseDto createEnrollment(EnrollmentRequestDto dto) {
-        Student student = studentRepo.findById(dto.studentId())
-                .orElseThrow(() -> new NoSuchElementException("Student not found"));
-        Course course = courseRepo.findById(dto.courseId())
-                .orElseThrow(() -> new NoSuchElementException("Course not found"));
 
-        // Проверка за Teacher
-        Teacher teacher = null;
-        if (dto.teacherId() != null) {
-            teacher = teacherRepo.findById(dto.teacherId())
-                    .orElseThrow(() -> new NoSuchElementException("Teacher not found"));
+        Student student = studentRepo
+                .findStudentByFullName(dto.studentFirstName(), dto.studentLastName())
+                .orElseThrow(() -> new IllegalArgumentException("Student does not exist"));
+
+        Teacher teacher = teacherRepo
+                .findTeacherByFullName(dto.teacherFirstName(), dto.teacherLastName())
+                .orElseThrow(() -> new IllegalArgumentException("Teacher does not exist"));
+
+        Course course = courseRepo
+                .findCourseByName(dto.courseName())
+                .orElseThrow(() -> new IllegalArgumentException("Course does not exist"));
+
+
+        // GRADE – създаваме, защото е част от Enrollment
+        if (dto.gradeValue() == null) {
+            throw new IllegalArgumentException("Grade value cannot be null");
         }
 
-        // Проверка за Grade
-        Grade grade = null;
-        if (dto.gradeId() != null) {
-            grade = gradeRepo.findById(dto.gradeId())
-                    .orElseThrow(() -> new NoSuchElementException("Grade not found"));
-        }
+        Grade grade = new Grade(dto.gradeValue());
+        gradeRepo.save(grade);
 
+        // ENROLLMENT
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
         enrollment.setCourse(course);
-        enrollment.setTeacher(teacher);  // сетва учителя
-        enrollment.setGrade(grade);      // сетва оценката
+        enrollment.setTeacher(teacher);
+        enrollment.setGrade(grade);
         enrollment.setEnrolledAt(dto.enrolledAt());
 
-        Enrollment saved = enrollmentRepo.save(enrollment);
-        return enrollmentMapper.toDto(saved);
+        return enrollmentMapper.toDto(
+                enrollmentRepo.save(enrollment)
+        );
     }
 
-
-    // Връща всички Enrollment-и
     public List<EnrollmentResponseDto> getAllEnrollments() {
         return enrollmentRepo.findAll()
                 .stream()
@@ -65,11 +66,11 @@ public class EnrollmentService {
                 .toList();
     }
 
-    // Връща Enrollment по ID
     public EnrollmentResponseDto getEnrollmentById(Long id) {
-        Enrollment enrollment = enrollmentRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Enrollment not found with id " + id));
-        return enrollmentMapper.toDto(enrollment);
+        return enrollmentRepo.findById(id)
+                .map(enrollmentMapper::toDto)
+                .orElseThrow(() ->
+                        new RuntimeException("Enrollment not found")
+                );
     }
-
 }
