@@ -40,7 +40,11 @@ public class EnrollmentService {
 
         // Проверка gradedAt
         if (dto.gradedAt() == null) {
-            throw new IllegalArgumentException("gradedAt is required");
+            throw new IllegalArgumentException("Graded date is required");
+        }
+
+        if (dto.gradedAt().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Graded date cannot be after date now");
         }
 
         // ENROLLMENT
@@ -99,6 +103,18 @@ public class EnrollmentService {
         // Проверка валидност на оценката
         if (newGrade == null || newGrade < 2.0 || newGrade > 6.0) {
             throw new IllegalArgumentException("Grade must be between 2.00 and 6.00");
+        }
+
+        if(newGradedAt == null) {
+            throw new IllegalArgumentException("New graded date cannot be null");
+        }
+
+        if(newGradedAt.isBefore(enrollment.getGradedAt())) {
+            throw new IllegalArgumentException("New graded date cannot be before the old graded date");
+        }
+
+        if(newGradedAt.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("New graded date cannot be after date now");
         }
 
         // Проверка дали са минали 4 месеца
