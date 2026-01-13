@@ -2,6 +2,10 @@ package com.tu.java_spring_project.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -34,12 +38,13 @@ public class Enrollment {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    // One Enrollment -> One Grade
-    @OneToOne
-    @JoinColumn(name = "grade_id")
-    private Grade grade;
+    @NotNull(message = "Grade value is required")
+    @DecimalMin(value = "2.00", message = "Grade must be at least 2.00")
+    @DecimalMax(value = "6.00", message = "Grade must not exceed 6.00")
+    @Column(name = "grade_value", nullable = false)
+    private Double gradeValue;
 
-    // Дата на записване
-    @Column(name = "enrolled_at", nullable = false)
-    private LocalDate enrolledAt;
+    @NotNull(message = "Graded date is required")
+    @Column(name = "graded_at", nullable = false)
+    private LocalDate gradedAt;
 }

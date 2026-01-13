@@ -12,7 +12,8 @@ public interface EnrollmentMapper {
     @Mapping(target = "studentName", expression = "java(formatStudentName(enrollment))")
     @Mapping(target = "teacherName", expression = "java(formatTeacherName(enrollment))")
     @Mapping(target = "courseName", source = "course.courseName")
-    @Mapping(target = "gradeValue", source = "grade.gradeValue")
+    @Mapping(target = "gradeValue", source = "gradeValue")
+    @Mapping(target = "gradedAt", source = "gradedAt")
     EnrollmentResponseDto toDto(Enrollment enrollment);
 
     Enrollment toEntity(EnrollmentRequestDto dto);

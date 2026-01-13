@@ -4,27 +4,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity // to save class in DB
-@Table(name = "rooms") // table in DB
-@Data // auto-generated getters, setters, constructors and some methods
-@NoArgsConstructor // empty constructor
+@Entity
+@Table(name = "rooms")
+@Data
+@NoArgsConstructor
 public class Room {
-    @Id // primary key
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY) // in JSON response, but not in POST / PUT
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    @Min(20)
-    @Max(100)
-    @Positive
-    @Column(nullable = false) // column in DB, can't be null
+    @NotNull(message = "Capacity is required")
+    @Min(value = 20, message = "Room capacity must be at least 20")
+    @Max(value = 100, message = "Room capacity cannot exceed 100")
+    @Column(nullable = false)
     private int capacity;
 
     // One Room -> Many Courses

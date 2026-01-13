@@ -3,11 +3,9 @@ package com.tu.java_spring_project.demo.dto;
 import java.time.LocalDate;
 
 public record EnrollmentRequestDto(
-        String studentFirstName,
-        String studentLastName,
+        String studentFacultyNumber,
         String courseName,
-        String teacherFirstName,
-        String teacherLastName,
+        Long teacherId,
         Double gradeValue,
-        LocalDate enrolledAt
+        LocalDate gradedAt
 ) {}

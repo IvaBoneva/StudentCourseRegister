@@ -8,5 +8,5 @@ public record EnrollmentResponseDto(
         String courseName,
         String teacherName,
         Double gradeValue,
-        LocalDate enrolledAt
+        LocalDate gradedAt
 ) {}

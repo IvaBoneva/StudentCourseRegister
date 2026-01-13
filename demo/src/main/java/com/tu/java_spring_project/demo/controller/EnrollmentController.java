@@ -1,5 +1,6 @@
 package com.tu.java_spring_project.demo.controller;
 
+import com.tu.java_spring_project.demo.dto.EnrollmentGradeUpdateDto;
 import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
 import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.service.EnrollmentService;
@@ -35,4 +36,20 @@ public class EnrollmentController {
     public ResponseEntity<EnrollmentResponseDto> getEnrollmentById(@PathVariable Long id) {
         return ResponseEntity.ok(enrollmentService.getEnrollmentById(id));
     }
+
+    // DELETE /api/enrollments/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEnrollment(@PathVariable Long id) {
+        enrollmentService.deleteEnrollment(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EnrollmentResponseDto> updateGrade(
+            @PathVariable Long id,
+            @RequestBody EnrollmentGradeUpdateDto dto) {
+        EnrollmentResponseDto updated = enrollmentService.updateGrade(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
 }

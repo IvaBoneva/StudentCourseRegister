@@ -4,14 +4,13 @@ import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
 import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.model.Course;
 import com.tu.java_spring_project.demo.model.Enrollment;
-import com.tu.java_spring_project.demo.model.Grade;
 import java.time.LocalDate;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-12-22T14:53:58+0200",
+    date = "2026-01-13T18:56:38+0200",
     comments = "version: 1.6.0, compiler: javac, environment: Java 17.0.16 (Eclipse Adoptium)"
 )
 @Component
@@ -25,18 +24,18 @@ public class EnrollmentMapperImpl implements EnrollmentMapper {
 
         String courseName = null;
         Double gradeValue = null;
+        LocalDate gradedAt = null;
         Long id = null;
-        LocalDate enrolledAt = null;
 
         courseName = enrollmentCourseCourseName( enrollment );
-        gradeValue = enrollmentGradeGradeValue( enrollment );
+        gradeValue = enrollment.getGradeValue();
+        gradedAt = enrollment.getGradedAt();
         id = enrollment.getId();
-        enrolledAt = enrollment.getEnrolledAt();
 
         String studentName = formatStudentName(enrollment);
         String teacherName = formatTeacherName(enrollment);
 
-        EnrollmentResponseDto enrollmentResponseDto = new EnrollmentResponseDto( id, studentName, courseName, teacherName, gradeValue, enrolledAt );
+        EnrollmentResponseDto enrollmentResponseDto = new EnrollmentResponseDto( id, studentName, courseName, teacherName, gradeValue, gradedAt );
 
         return enrollmentResponseDto;
     }
@@ -49,7 +48,8 @@ public class EnrollmentMapperImpl implements EnrollmentMapper {
 
         Enrollment enrollment = new Enrollment();
 
-        enrollment.setEnrolledAt( dto.enrolledAt() );
+        enrollment.setGradeValue( dto.gradeValue() );
+        enrollment.setGradedAt( dto.gradedAt() );
 
         return enrollment;
     }
@@ -60,13 +60,5 @@ public class EnrollmentMapperImpl implements EnrollmentMapper {
             return null;
         }
         return course.getCourseName();
-    }
-
-    private Double enrollmentGradeGradeValue(Enrollment enrollment) {
-        Grade grade = enrollment.getGrade();
-        if ( grade == null ) {
-            return null;
-        }
-        return grade.getGradeValue();
     }
 }

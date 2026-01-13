@@ -1,5 +1,6 @@
 package com.tu.java_spring_project.demo.service;
 
+import com.tu.java_spring_project.demo.dto.EnrollmentGradeUpdateDto;
 import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
 import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.mapper.EnrollmentMapper;
@@ -9,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -20,44 +22,44 @@ public class EnrollmentService {
     private final StudentRepo studentRepo;
     private final CourseRepo courseRepo;
     private final TeacherRepo teacherRepo;
-    private final GradeRepo gradeRepo;
     private final EnrollmentMapper enrollmentMapper;
 
     public EnrollmentResponseDto createEnrollment(EnrollmentRequestDto dto) {
 
-        Student student = studentRepo
-                .findStudentByFullName(dto.studentFirstName(), dto.studentLastName())
+        // Намери студент по faculty number
+        Student student = studentRepo.findStudentByFacultyNumber(dto.studentFacultyNumber())
                 .orElseThrow(() -> new IllegalArgumentException("Student does not exist"));
 
-        Teacher teacher = teacherRepo
-                .findTeacherByFullName(dto.teacherFirstName(), dto.teacherLastName())
+        // Намери учител по ID
+        Teacher teacher = teacherRepo.findById(dto.teacherId())
                 .orElseThrow(() -> new IllegalArgumentException("Teacher does not exist"));
 
-        Course course = courseRepo
-                .findCourseByName(dto.courseName())
+        // Намери курс по име
+        Course course = courseRepo.findCourseByName(dto.courseName())
                 .orElseThrow(() -> new IllegalArgumentException("Course does not exist"));
 
-
-        // GRADE – създаваме, защото е част от Enrollment
-        if (dto.gradeValue() == null) {
-            throw new IllegalArgumentException("Grade value cannot be null");
+        // Проверка gradedAt
+        if (dto.gradedAt() == null) {
+            throw new IllegalArgumentException("gradedAt is required");
         }
-
-        Grade grade = new Grade(dto.gradeValue());
-        gradeRepo.save(grade);
 
         // ENROLLMENT
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
-        enrollment.setCourse(course);
         enrollment.setTeacher(teacher);
-        enrollment.setGrade(grade);
-        enrollment.setEnrolledAt(dto.enrolledAt());
+        enrollment.setCourse(course);
+        enrollment.setGradeValue(dto.gradeValue());
 
-        return enrollmentMapper.toDto(
-                enrollmentRepo.save(enrollment)
-        );
+
+        // Задаваме gradedAt
+        enrollment.setGradedAt(dto.gradedAt());
+
+        // Save Enrollment
+        Enrollment saved = enrollmentRepo.save(enrollment);
+
+        return enrollmentMapper.toDto(saved);
     }
+
 
     public List<EnrollmentResponseDto> getAllEnrollments() {
         return enrollmentRepo.findAll()
@@ -73,4 +75,48 @@ public class EnrollmentService {
                         new RuntimeException("Enrollment not found")
                 );
     }
+
+    public void deleteEnrollment(Long id) {
+
+        Enrollment enrollment = enrollmentRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Enrollment not found with id " + id
+                ));
+        enrollmentRepo.delete(enrollment);
+
+    }
+
+    public EnrollmentResponseDto updateGrade(Long enrollmentId, EnrollmentGradeUpdateDto dto) {
+        // Намираме запис
+        Enrollment enrollment = enrollmentRepo.findById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Enrollment not found with id " + enrollmentId
+                ));
+
+        Double newGrade = dto.gradeValue();
+        LocalDate newGradedAt = dto.gradedAt();
+
+        // Проверка валидност на оценката
+        if (newGrade == null || newGrade < 2.0 || newGrade > 6.0) {
+            throw new IllegalArgumentException("Grade must be between 2.00 and 6.00");
+        }
+
+        // Проверка дали са минали 4 месеца
+        LocalDate fourMonthsLater = enrollment.getGradedAt().plusMonths(4);
+        if (LocalDate.now().isAfter(fourMonthsLater)) {
+            throw new IllegalArgumentException(
+                    "Cannot update grade after 4 months from gradedAt"
+            );
+        }
+
+        // Актуализиране
+        enrollment.setGradeValue(newGrade);
+        enrollment.setGradedAt(newGradedAt);
+        Enrollment saved = enrollmentRepo.save(enrollment);
+
+        return enrollmentMapper.toDto(saved);
+    }
+
+
+
 }

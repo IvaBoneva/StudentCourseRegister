@@ -11,14 +11,13 @@ import java.util.Optional;
 @Repository
 public interface StudentRepo extends JpaRepository<Student, Long> {
 
+
     @Query("""
         SELECT s
         FROM Student s
-        WHERE s.firstName = :firstName
-          AND s.lastName = :lastName
+        WHERE s.facultyNumber = :facultyNumber
     """)
-    Optional<Student> findStudentByFullName(
-            @Param("firstName") String firstName,
-            @Param("lastName") String lastName
+    Optional<Student> findStudentByFacultyNumber(
+            @Param("facultyNumber") String facultyNumber
     );
 }
