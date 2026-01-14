@@ -12,7 +12,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity // to save class in DB
-@Table(name = "enrollments") // table in DB
+@Table(
+        name = "enrollments",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"student_id", "course_id"})
+        }
+) // table in DB
 @Data // auto-generated getters, setters, constructors and some methods
 @NoArgsConstructor // empty constructor
 public class Enrollment {
