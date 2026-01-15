@@ -47,6 +47,21 @@ public class EnrollmentService {
             throw new IllegalArgumentException("Graded date cannot be after date now");
         }
 
+        // Колко курса води учителят
+        long distinctCourseCount = enrollmentRepo.findAll().stream()
+                .filter(e -> e.getTeacher().getId().equals(teacher.getId()))
+                .map(e -> e.getCourse().getId())
+                .distinct().count();
+
+        // Ако учителят не води подаденият курс
+        boolean isNewCourseForTeacher = enrollmentRepo.findAll().stream()
+                .noneMatch(e -> e.getTeacher().getId().equals(teacher.getId())
+                        && e.getCourse().getId().equals(course.getId()));
+
+        if (isNewCourseForTeacher && distinctCourseCount >= 3) {
+            throw new IllegalArgumentException("Teacher cannot teach more than 3 courses");
+        }
+
         // ENROLLMENT
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
