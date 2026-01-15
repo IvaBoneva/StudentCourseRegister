@@ -17,4 +17,5 @@ public interface CourseRepo extends JpaRepository<Course, Long> {
         WHERE c.courseName = :courseName
     """)
     Optional<Course> findCourseByName(@Param("courseName") String courseName);
+
 }

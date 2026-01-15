@@ -6,6 +6,7 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jdk.jshell.Snippet;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -47,4 +48,5 @@ public class Enrollment {
     @NotNull(message = "Graded date is required")
     @Column(name = "graded_at", nullable = false)
     private LocalDate gradedAt;
+
 }
