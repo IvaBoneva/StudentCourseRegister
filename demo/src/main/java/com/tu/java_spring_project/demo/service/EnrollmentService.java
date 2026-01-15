@@ -61,6 +61,11 @@ public class EnrollmentService {
         if (isNewCourseForTeacher && distinctCourseCount >= 3) {
             throw new IllegalArgumentException("Teacher cannot teach more than 3 courses");
         }
+        // Проверка дали стаята е пълна
+        long studentsInCourse = course.getEnrollments().stream().count();
+
+        if(studentsInCourse >= course.getRoom().getCapacity())
+            throw new RuntimeException("Room is full");
 
         // ENROLLMENT
         Enrollment enrollment = new Enrollment();
