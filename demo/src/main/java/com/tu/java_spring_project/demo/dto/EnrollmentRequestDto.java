@@ -8,4 +8,5 @@ public record EnrollmentRequestDto(
         Long teacherId,
         Double gradeValue,
         LocalDate gradedAt
-) {}
+) {
+}

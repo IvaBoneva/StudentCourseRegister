@@ -51,6 +51,36 @@ public class EnrollmentService {
             throw new IllegalArgumentException("Graded date cannot be after date now");
         }
 
+        // Колко курса води учителят
+        long distinctCourseCount = enrollmentRepo.findAll().stream()
+                .filter(e -> e.getTeacher().getId().equals(teacher.getId()))
+                .map(e -> e.getCourse().getId())
+                .distinct().count();
+
+        // Ако учителят не води подаденият курс
+        boolean isNewCourseForTeacher = enrollmentRepo.findAll().stream()
+                .noneMatch(e -> e.getTeacher().getId().equals(teacher.getId())
+                        && e.getCourse().getId().equals(course.getId()));
+
+        if (isNewCourseForTeacher && distinctCourseCount >= 3) {
+            throw new IllegalArgumentException("Teacher cannot teach more than 3 courses");
+        }
+
+        // Проверка дали стаята е пълна
+        long studentsInCourse = course.getEnrollments().stream().count();
+
+        if(studentsInCourse >= course.getRoom().getCapacity())
+            throw new RuntimeException("Room is full");
+
+        // Проверка дали студентът вече има оценка по този предмет
+        boolean studentAlreadyGraded = enrollmentRepo.findAll().stream()
+                .anyMatch(e -> e.getStudent().getId().equals(student.getId())
+                        && e.getCourse().getId().equals(course.getId()));
+
+        if (studentAlreadyGraded){
+            throw new IllegalArgumentException("Student already has a grade for this course");
+        }
+
         // ENROLLMENT
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);

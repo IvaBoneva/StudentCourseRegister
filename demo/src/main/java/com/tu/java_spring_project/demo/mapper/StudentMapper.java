@@ -28,6 +28,7 @@ public interface StudentMapper {
         if (enrollments == null) return null;
         return enrollments.stream()
                 .map(enrollment -> enrollment.getCourse().getName())
+                .distinct()
                 .collect(Collectors.toList());
     }
 }
