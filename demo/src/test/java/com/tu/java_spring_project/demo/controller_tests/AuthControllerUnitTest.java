@@ -4,6 +4,7 @@ import com.tu.java_spring_project.demo.config.security.StudentPrincipal;
 import com.tu.java_spring_project.demo.config.security.TeacherPrincipal;
 import com.tu.java_spring_project.demo.controller.AuthController;
 import com.tu.java_spring_project.demo.dto.auth.ActivateRequestDTO;
+import com.tu.java_spring_project.demo.dto.auth.ChangePasswordRequestDTO;
 import com.tu.java_spring_project.demo.dto.auth.student.*;
 import com.tu.java_spring_project.demo.dto.auth.teacher.*;
 import com.tu.java_spring_project.demo.mapper.StudentMapper;
@@ -316,6 +317,77 @@ class AuthControllerUnitTest {
                 () -> authController.activateStudent(req));
 
         assertEquals("Invalid token", ex.getMessage());
+    }
+
+    // ---------------- PASSWORD CHANGE TESTS ----------------
+
+    @Test
+    void changeTeacherPassword_ShouldCallService() {
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO(
+                "tpetrov@example.com", "oldPass", "newPass"
+        );
+
+        // No need to mock return value because method returns void
+        doNothing().when(teacherService)
+                .changePasswordForTeacher(anyString(), anyString(), anyString(), any(PasswordEncoder.class));
+
+        var response = authController.changeTeacherPassword(request);
+
+        assertEquals(200, response.getStatusCodeValue());
+        verify(teacherService, times(1))
+                .changePasswordForTeacher("tpetrov@example.com", "oldPass", "newPass", passwordEncoder);
+    }
+
+    @Test
+    void changeTeacherPassword_WrongOldPassword_ShouldThrow() {
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO(
+                "tpetrov@example.com", "wrongOld", "newPass"
+        );
+
+        doThrow(new IllegalArgumentException("Old password is incorrect"))
+                .when(teacherService)
+                .changePasswordForTeacher(anyString(), anyString(), anyString(), any(PasswordEncoder.class));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authController.changeTeacherPassword(request)
+        );
+
+        assertEquals("Old password is incorrect", ex.getMessage());
+    }
+
+    @Test
+    void changeStudentPassword_ShouldCallService() {
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO(
+                "123456789", "oldPass", "newPass"
+        );
+
+        doNothing().when(studentService)
+                .changePasswordForStudent(anyString(), anyString(), anyString(), any(PasswordEncoder.class));
+
+        var response = authController.changeStudentPassword(request);
+
+        assertEquals(200, response.getStatusCodeValue());
+        verify(studentService, times(1))
+                .changePasswordForStudent("123456789", "oldPass", "newPass", passwordEncoder);
+    }
+
+    @Test
+    void changeStudentPassword_WrongOldPassword_ShouldThrow() {
+        ChangePasswordRequestDTO request = new ChangePasswordRequestDTO(
+                "123456789", "wrongOld", "newPass"
+        );
+
+        doThrow(new IllegalArgumentException("Old password is incorrect"))
+                .when(studentService)
+                .changePasswordForStudent(anyString(), anyString(), anyString(), any(PasswordEncoder.class));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> authController.changeStudentPassword(request)
+        );
+
+        assertEquals("Old password is incorrect", ex.getMessage());
     }
 
 }

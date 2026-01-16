@@ -10,6 +10,9 @@ import com.tu.java_spring_project.demo.service.StudentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,6 +28,9 @@ class StudentServiceTest {
     @Mock
     private StudentMapper studentMapper;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private Student student;
 
     @BeforeEach
@@ -36,6 +42,7 @@ class StudentServiceTest {
                 .facultyNumber("123456789")
                 .email("mivanova@example.com")
                 .enabled(false)
+                .password("encodedOldPass")
                 .build();
     }
 
@@ -72,6 +79,49 @@ class StudentServiceTest {
                 () -> studentService.registerStudent(request));
 
         assertEquals("Student with facultyNumber=123456789 already exists", ex.getMessage());
+        verify(studentRepo, never()).save(any());
+    }
+
+    @Test
+    void changePasswordForStudent_ShouldUpdatePassword() {
+        String oldPassword = "oldPass";
+        String newPassword = "newPass";
+
+        when(studentRepo.findStudentByFacultyNumber("123456789")).thenReturn(Optional.of(student));
+        when(passwordEncoder.matches(oldPassword, "encodedOldPass")).thenReturn(true);
+        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPass");
+        when(studentRepo.save(student)).thenReturn(student);
+
+        studentService.changePasswordForStudent("123456789", oldPassword, newPassword, passwordEncoder);
+
+        verify(studentRepo, times(1)).save(student);
+        assertEquals("encodedNewPass", student.getPassword());
+    }
+
+    @Test
+    void changePasswordForStudent_StudentNotFound_ShouldThrow() {
+        when(studentRepo.findStudentByFacultyNumber("999999999")).thenReturn(Optional.empty());
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studentService.changePasswordForStudent("999999999", "oldPass", "newPass", passwordEncoder)
+        );
+
+        assertEquals("Student not found with faculty number: 999999999", ex.getMessage());
+        verify(studentRepo, never()).save(any());
+    }
+
+    @Test
+    void changePasswordForStudent_WrongOldPassword_ShouldThrow() {
+        when(studentRepo.findStudentByFacultyNumber("123456789")).thenReturn(Optional.of(student));
+        when(passwordEncoder.matches("wrongOldPass", "encodedOldPass")).thenReturn(false);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studentService.changePasswordForStudent("123456789", "wrongOldPass", "newPass", passwordEncoder)
+        );
+
+        assertEquals("Old password is incorrect", ex.getMessage());
         verify(studentRepo, never()).save(any());
     }
 }

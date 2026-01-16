@@ -13,6 +13,7 @@ import org.mockito.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -37,6 +38,9 @@ class TeacherServiceTest {
     private Authentication authentication;
 
     private Teacher teacher;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
@@ -132,6 +136,56 @@ class TeacherServiceTest {
 
         assertThrows(RuntimeException.class,
                 () -> teacherService.patchTeacherRole(999L, Role.ADMIN));
+    }
+
+    @Test
+    void changePasswordForTeacher_ShouldUpdatePassword() {
+        String email = "tpetrov@example.com";
+        String oldPassword = "oldPass";
+        String newPassword = "newPass";
+
+        teacher.setPassword("encodedOldPass"); // current password in DB
+
+        when(teacherRepo.findTeacherByEmail(email)).thenReturn(Optional.of(teacher));
+        when(passwordEncoder.matches(oldPassword, "encodedOldPass")).thenReturn(true);
+        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPass");
+        when(teacherRepo.save(any(Teacher.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        teacherService.changePasswordForTeacher(email, oldPassword, newPassword, passwordEncoder);
+
+        // Assert
+        assertEquals("encodedNewPass", teacher.getPassword());
+        verify(teacherRepo, times(1)).save(teacher);
+    }
+
+    @Test
+    void changePasswordForTeacher_InvalidOldPassword_ShouldThrow() {
+        String email = "tpetrov@example.com";
+        String oldPassword = "wrongOld";
+        String newPassword = "newPass";
+
+        teacher.setPassword("encodedOldPass");
+        when(teacherRepo.findTeacherByEmail(email)).thenReturn(Optional.of(teacher));
+        when(passwordEncoder.matches(oldPassword, "encodedOldPass")).thenReturn(false);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                teacherService.changePasswordForTeacher(email, oldPassword, newPassword, passwordEncoder));
+
+        assertEquals("Old password is incorrect", ex.getMessage());
+        verify(teacherRepo, never()).save(any());
+    }
+
+    @Test
+    void changePasswordForTeacher_TeacherNotFound_ShouldThrow() {
+        String email = "missing@example.com";
+        when(teacherRepo.findTeacherByEmail(email)).thenReturn(Optional.empty());
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                teacherService.changePasswordForTeacher(email, "oldPass", "newPass", passwordEncoder));
+
+        assertEquals("Teacher not found with email: " + email, ex.getMessage());
+        verify(teacherRepo, never()).save(any());
     }
 
 }
