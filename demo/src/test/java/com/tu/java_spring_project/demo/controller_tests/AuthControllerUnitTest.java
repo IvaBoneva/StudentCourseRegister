@@ -71,14 +71,14 @@ class AuthControllerUnitTest {
     void setUp() {
         teacher = Teacher.builder()
                 .id(1L)
-                .email("john@example.com")
+                .email("tpetrov@example.com")
                 .activationToken("token123")
                 .enabled(false)
                 .build();
 
         student = Student.builder()
                 .facultyNumber("123456789")
-                .email("alice@example.com")
+                .email("mivanova@example.com")
                 .enabled(false)
                 .build();
     }
@@ -87,8 +87,8 @@ class AuthControllerUnitTest {
 
     @Test
     void registerTeacher_ShouldReturnCreated() {
-        TeacherRegisterRequestDTO request = new TeacherRegisterRequestDTO("John", "Doe", "john@example.com");
-        TeacherRegisterResponseDTO responseDTO = new TeacherRegisterResponseDTO(1L, "john@example.com", "token123");
+        TeacherRegisterRequestDTO request = new TeacherRegisterRequestDTO("Todor", "Petrov", "tpetrov@example.com");
+        TeacherRegisterResponseDTO responseDTO = new TeacherRegisterResponseDTO(1L, "tpetrov@example.com", "token123");
 
         when(teacherService.registerTeacher(request)).thenReturn(teacher);
         when(teacherMapper.toTeacherRegisterResponseDto(teacher)).thenReturn(responseDTO);
@@ -117,7 +117,7 @@ class AuthControllerUnitTest {
 
     @Test
     void loginTeacher_ShouldReturnToken() {
-        TeacherLoginRequestDTO req = new TeacherLoginRequestDTO("john@example.com", "pass1234");
+        TeacherLoginRequestDTO req = new TeacherLoginRequestDTO("tpetrov@example.com", "pass1234");
 
         Authentication authMock = mock(Authentication.class);
         TeacherPrincipal principalMock = mock(TeacherPrincipal.class);
@@ -125,9 +125,9 @@ class AuthControllerUnitTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authMock);
         when(authMock.getPrincipal()).thenReturn(principalMock);
-        when(principalMock.getEmail()).thenReturn("john@example.com");
+        when(principalMock.getEmail()).thenReturn("tpetrov@example.com");
         when(principalMock.getAuthorities()).thenReturn(Set.of(() -> "ROLE_TEACHER"));
-        when(jwtProvider.generateToken("john@example.com", "ROLE_TEACHER")).thenReturn("jwt-token");
+        when(jwtProvider.generateToken("tpetrov@example.com", "ROLE_TEACHER")).thenReturn("jwt-token");
 
         var response = authController.loginTeacher(req).getBody();
 
@@ -137,7 +137,7 @@ class AuthControllerUnitTest {
 
     @Test
     void loginTeacher_InvalidCredentials_ShouldThrowException() {
-        TeacherLoginRequestDTO req = new TeacherLoginRequestDTO("john@example.com", "wrongpass");
+        TeacherLoginRequestDTO req = new TeacherLoginRequestDTO("tpetrov@example.com", "wrongpass1");
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new RuntimeException("Bad credentials"));
@@ -176,7 +176,7 @@ class AuthControllerUnitTest {
     @Test
     void registerTeacher_InvalidDTO_ShouldThrow() {
         // firstName is blank
-        TeacherRegisterRequestDTO request = new TeacherRegisterRequestDTO("", "Doe", "john@example.com");
+        TeacherRegisterRequestDTO request = new TeacherRegisterRequestDTO("", "Petrov", "tpertov@example.com");
 
         // Normally validation would be handled by @Valid and BindingResult in controller,
         // here we simulate service throwing an exception
@@ -193,8 +193,8 @@ class AuthControllerUnitTest {
 
     @Test
     void registerStudent_ShouldReturnCreated() {
-        StudentRegisterRequestDTO request = new StudentRegisterRequestDTO("Alice", "Smith", "123456789", "alice@example.com", null);
-        StudentRegisterResponseDTO responseDTO = new StudentRegisterResponseDTO(1L, "123456789", "alice@example.com", "token123");
+        StudentRegisterRequestDTO request = new StudentRegisterRequestDTO("Maria", "Ivanova", "123456789", "mivanova@example.com", null);
+        StudentRegisterResponseDTO responseDTO = new StudentRegisterResponseDTO(1L, "123456789", "mivanova@example.com", "token123");
 
         when(studentService.registerStudent(request)).thenReturn(student);
         when(studentMapper.toStudentRegisterResponseDTO(student)).thenReturn(responseDTO);
@@ -266,7 +266,7 @@ class AuthControllerUnitTest {
     @Test
     void registerStudent_DuplicateFacultyNumber_ShouldThrow() {
         StudentRegisterRequestDTO request = new StudentRegisterRequestDTO(
-                "Alice", "Smith", "123456789", "alice@example.com", null
+                "Maria", "Ivanova", "123456789", "mivanova@example.com", null
         );
 
         when(studentService.registerStudent(request)).thenThrow(new RuntimeException("Faculty number exists"));
@@ -294,7 +294,7 @@ class AuthControllerUnitTest {
     void registerStudent_InvalidDTO_ShouldThrow() {
         // Missing facultyNumber
         StudentRegisterRequestDTO request = new StudentRegisterRequestDTO(
-                "Alice", "Smith", "", "alice@example.com", null
+                "Maria", "Ivanova", "", "mivanova@example.com", null
         );
 
         when(studentService.registerStudent(request))
