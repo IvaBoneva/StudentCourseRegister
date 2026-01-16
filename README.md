@@ -7,7 +7,8 @@
 ## Description
 Spring Boot REST API за регистрация на студенти за курсове.  
 Позволява:
-- CRUD операции със студенти и курсове
+- CRUD операции със студенти и преподаватели
+- Създаване и управление на курсове и зали
 - Регистрация на студенти за курсове
 - JWT базирана автентикация и авторизация
 
@@ -85,7 +86,7 @@ cd student-course-register
 | Method | URL | Description | Roles |
 |--------|-----|------------|-------|
 | GET | /api/courses | Всички курсове | ADMIN |
-| GET | /api/courses/{id} | Конкретен курс | ADMIN или преподавателът му |
+| GET | /api/courses/{id} | Конкретен курс | ADMIN или преподавателят му |
 | GET | /api/courses/teacher/{teacherId} | Всички курсове на преподавател | ADMIN или преподавател |
 | POST | /api/courses/save | Създаване на нов курс | ADMIN |
 | PUT | /api/courses/{id} | Актуализация на курс | ADMIN |
