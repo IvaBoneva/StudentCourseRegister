@@ -5,30 +5,24 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Description
-Spring Boot REST API за управление на учебен процес. Системата позволява администрация на студенти, преподаватели и курсове, като включва функционалност за резервация на зали и автоматизирано записване за курсове.
-
-**Основни възможности:**
-
-Управление на ресурси: Пълен CRUD за студенти, преподаватели, курсове и зали.
-
-Записване: Функционалност за записване на студенти в специфични курсове с проследяване на оценки.
-
-Сигурност: JWT автентикация с три нива на достъп (ADMIN, TEACHER, STUDENT).
-
-Документация: Пълна интерактивна документация чрез Swagger UI.
+Spring Boot REST API за регистрация на студенти за курсове.  
+Позволява:
+- CRUD операции със студенти и преподаватели
+- Създаване и управление на курсове и зали
+- Регистрация на студенти за курсове
+- JWT базирана автентикация и авторизация
 
 ---
 
 ## Technologies
-Backend: Java 17, Spring Boot 3
+- **Java 17**
+- **Spring Boot 3**
+- **PostgreSQL**
+- **Spring Data JPA**
+- **Spring Security (JWT)**
+- **Maven**
+- **Swagger/OpenAPI**## API Endpoints
 
-Database: PostgreSQL, Spring Data JPA
-
-Security: Spring Security, JWT (JSON Web Tokens)
-
-API: REST, Swagger/OpenAPI
-
-Build Tool: Maven
 ---
 
 Swagger UI за тестване на API е достъпен на:
