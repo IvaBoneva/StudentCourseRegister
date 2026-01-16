@@ -31,8 +31,8 @@ public class AdminTeacherSeeder implements CommandLineRunner {
         }
 
         Teacher teacher = Teacher.builder()
-                .firstName("Didi")
-                .lastName("Todorova")
+                .firstName("Maria")
+                .lastName("Dimitrova")
                 .email("admin@example.com")
                 .password(passwordEncoder.encode("VeryStrongPass#100"))
                 .role(Role.ADMIN)
