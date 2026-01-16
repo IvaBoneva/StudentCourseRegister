@@ -23,11 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -163,6 +160,35 @@ class AuthControllerUnitTest {
         assertEquals("Invalid token", ex.getMessage());
     }
 
+    @Test
+    void loginTeacher_NonExistentTeacher_ShouldThrow() {
+        TeacherLoginRequestDTO req = new TeacherLoginRequestDTO("nonexistent@example.com", "pass1234");
+
+        when(authenticationManager.authenticate(any()))
+                .thenThrow(new RuntimeException("User not found"));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> authController.loginTeacher(req));
+
+        assertEquals("User not found", ex.getMessage());
+    }
+
+    @Test
+    void registerTeacher_InvalidDTO_ShouldThrow() {
+        // firstName is blank
+        TeacherRegisterRequestDTO request = new TeacherRegisterRequestDTO("", "Doe", "john@example.com");
+
+        // Normally validation would be handled by @Valid and BindingResult in controller,
+        // here we simulate service throwing an exception
+        when(teacherService.registerTeacher(request))
+                .thenThrow(new RuntimeException("Validation failed: firstName is required"));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> authController.registerTeacher(request));
+
+        assertEquals("Validation failed: firstName is required", ex.getMessage());
+    }
+
     // ---------------- STUDENT TESTS ----------------
 
     @Test
@@ -251,5 +277,45 @@ class AuthControllerUnitTest {
         assertEquals("Faculty number exists", ex.getMessage());
     }
 
+    @Test
+    void loginStudent_NonExistentStudent_ShouldThrow() {
+        StudentLoginRequestDTO req = new StudentLoginRequestDTO("000000000", "pass1234");
+
+        when(authenticationManager.authenticate(any()))
+                .thenThrow(new RuntimeException("Student not found"));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> authController.loginStudent(req));
+
+        assertEquals("Student not found", ex.getMessage());
+    }
+
+    @Test
+    void registerStudent_InvalidDTO_ShouldThrow() {
+        // Missing facultyNumber
+        StudentRegisterRequestDTO request = new StudentRegisterRequestDTO(
+                "Alice", "Smith", "", "alice@example.com", null
+        );
+
+        when(studentService.registerStudent(request))
+                .thenThrow(new RuntimeException("Validation failed: facultyNumber is required"));
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> authController.registerStudent(request));
+
+        assertEquals("Validation failed: facultyNumber is required", ex.getMessage());
+    }
+
+    @Test
+    void activateStudent_InvalidToken_ShouldThrow() {
+        ActivateRequestDTO req = new ActivateRequestDTO("invalidtoken", "pass1234");
+
+        when(studentRepo.findByActivationToken("invalidtoken")).thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> authController.activateStudent(req));
+
+        assertEquals("Invalid token", ex.getMessage());
+    }
 
 }
