@@ -61,11 +61,21 @@ public class EnrollmentService {
         if (isNewCourseForTeacher && distinctCourseCount >= 3) {
             throw new IllegalArgumentException("Teacher cannot teach more than 3 courses");
         }
+
         // Проверка дали стаята е пълна
         long studentsInCourse = course.getEnrollments().stream().count();
 
         if(studentsInCourse >= course.getRoom().getCapacity())
             throw new RuntimeException("Room is full");
+
+        // Проверка дали студентът вече има оценка по този предмет
+        boolean studentAlreadyGraded = enrollmentRepo.findAll().stream()
+                .anyMatch(e -> e.getStudent().getId().equals(student.getId())
+                        && e.getCourse().getId().equals(course.getId()));
+
+        if (studentAlreadyGraded){
+            throw new IllegalArgumentException("Student already has a grade for this course");
+        }
 
         // ENROLLMENT
         Enrollment enrollment = new Enrollment();
