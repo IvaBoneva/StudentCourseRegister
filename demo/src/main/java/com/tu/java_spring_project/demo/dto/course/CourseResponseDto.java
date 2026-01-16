@@ -1,4 +1,4 @@
-package com.tu.java_spring_project.demo.dto;
+package com.tu.java_spring_project.demo.dto.course;
 
 import java.util.List;
 

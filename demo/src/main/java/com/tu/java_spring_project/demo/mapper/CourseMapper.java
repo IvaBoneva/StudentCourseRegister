@@ -1,7 +1,7 @@
 package com.tu.java_spring_project.demo.mapper;
 
-import com.tu.java_spring_project.demo.dto.CourseRequestDto;
-import com.tu.java_spring_project.demo.dto.CourseResponseDto;
+import com.tu.java_spring_project.demo.dto.course.CourseRequestDto;
+import com.tu.java_spring_project.demo.dto.course.CourseResponseDto;
 import com.tu.java_spring_project.demo.model.Course;
 import com.tu.java_spring_project.demo.model.Enrollment;
 import com.tu.java_spring_project.demo.model.Room;

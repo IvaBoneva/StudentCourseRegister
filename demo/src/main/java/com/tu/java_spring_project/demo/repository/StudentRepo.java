@@ -31,4 +31,8 @@ public interface StudentRepo extends JpaRepository<Student, Long> {
     Optional<Student> findStudentByFacultyNumber(
             @Param("facultyNumber") String facultyNumber
     );
+
+    boolean existsByFacultyNumber(String facultyNumber);
+
+    Optional<Student> findByActivationToken(String activationToken);
 }

@@ -1,13 +1,10 @@
 package com.tu.java_spring_project.demo.service;
 
-import com.tu.java_spring_project.demo.dto.CourseRequestDto;
-import com.tu.java_spring_project.demo.dto.CourseResponseDto;
-import com.tu.java_spring_project.demo.dto.CourseRequestDto;
-import com.tu.java_spring_project.demo.dto.CourseResponseDto;
+import com.tu.java_spring_project.demo.dto.course.CourseRequestDto;
+import com.tu.java_spring_project.demo.dto.course.CourseResponseDto;
 import com.tu.java_spring_project.demo.mapper.CourseMapper;
 import com.tu.java_spring_project.demo.model.Course;
 import com.tu.java_spring_project.demo.model.Room;
-import com.tu.java_spring_project.demo.model.Course;
 import com.tu.java_spring_project.demo.repository.CourseRepo;
 import com.tu.java_spring_project.demo.repository.RoomRepo;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +76,14 @@ public class CourseService {
         }
         courseRepo.deleteById(id);
     }
+
+    public List<CourseResponseDto> getCoursesByTeacherId(Long teacherId) {
+        return courseRepo.findAllByTeachersId(teacherId)
+                .stream()
+                .map(courseMapper::toCourseResponseDto)
+                .toList();
+    }
+
 
 }
 

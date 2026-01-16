@@ -1,7 +1,7 @@
 package com.tu.java_spring_project.demo.mapper;
 
-import com.tu.java_spring_project.demo.dto.RoomRequestDto;
-import com.tu.java_spring_project.demo.dto.RoomResponseDto;
+import com.tu.java_spring_project.demo.dto.room.RoomRequestDto;
+import com.tu.java_spring_project.demo.dto.room.RoomResponseDto;
 import com.tu.java_spring_project.demo.model.Course;
 import com.tu.java_spring_project.demo.model.Room;
 import org.mapstruct.Mapper;

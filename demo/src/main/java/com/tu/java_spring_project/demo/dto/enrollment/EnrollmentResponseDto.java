@@ -1,4 +1,4 @@
-package com.tu.java_spring_project.demo.dto;
+package com.tu.java_spring_project.demo.dto.enrollment;
 
 import java.time.LocalDate;
 

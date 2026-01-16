@@ -1,7 +1,7 @@
 package com.tu.java_spring_project.demo.mapper;
 
-import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
-import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentRequestDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.model.Enrollment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

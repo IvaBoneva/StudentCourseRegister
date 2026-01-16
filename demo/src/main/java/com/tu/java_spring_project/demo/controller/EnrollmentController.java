@@ -1,12 +1,13 @@
 package com.tu.java_spring_project.demo.controller;
 
-import com.tu.java_spring_project.demo.dto.EnrollmentGradeUpdateDto;
-import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
-import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentGradeUpdateDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentRequestDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<EnrollmentResponseDto> createEnrollment(
             @RequestBody EnrollmentRequestDto dto) {
@@ -27,16 +29,23 @@ public class EnrollmentController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<EnrollmentResponseDto>> getAllEnrollments() {
         return ResponseEntity.ok(enrollmentService.getAllEnrollments());
     }
 
+    @PreAuthorize("""
+    hasRole('ADMIN')
+    or @enrollmentSecurity.isTeacherOfEnrollment(principal.teacherId, #id)
+    or @enrollmentSecurity.isStudentOfEnrollment(principal.studentId, #id)
+""")
     @GetMapping("/{id}")
-    public ResponseEntity<EnrollmentResponseDto> getEnrollmentById(@PathVariable Long id) {
-        return ResponseEntity.ok(enrollmentService.getEnrollmentById(id));
+    public EnrollmentResponseDto getEnrollmentById(@PathVariable Long id) {
+        return enrollmentService.getEnrollmentById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     // DELETE /api/enrollments/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEnrollment(@PathVariable Long id) {
@@ -44,6 +53,7 @@ public class EnrollmentController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @enrollmentSecurity.isTeacherOfEnrollment(principal.teacherId, #id)")
     @PutMapping("/{id}")
     public ResponseEntity<EnrollmentResponseDto> updateGrade(
             @PathVariable Long id,

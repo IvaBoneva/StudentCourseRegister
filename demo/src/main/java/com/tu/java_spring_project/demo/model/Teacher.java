@@ -1,20 +1,24 @@
 package com.tu.java_spring_project.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "teachers")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = "enrollments")
+@EqualsAndHashCode(exclude = "enrollments")
+@Entity
 public class Teacher {
 
     @Id
@@ -38,7 +42,21 @@ public class Teacher {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name = "password")
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    boolean enabled;
+
+    @Column(unique = true)
+    String activationToken;
+
+
     // One Teacher -> Many Enrollments
     @OneToMany(mappedBy = "teacher")
+    @JsonIgnore
     private List<Enrollment> enrollments = new ArrayList<>();
 }

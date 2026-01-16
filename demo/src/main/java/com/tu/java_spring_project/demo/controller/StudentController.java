@@ -1,11 +1,12 @@
 package com.tu.java_spring_project.demo.controller;
 
-import com.tu.java_spring_project.demo.dto.StudentRequestDto;
-import com.tu.java_spring_project.demo.dto.StudentResponseDto;
+import com.tu.java_spring_project.demo.dto.student.StudentRequestDto;
+import com.tu.java_spring_project.demo.dto.student.StudentResponseDto;
 import com.tu.java_spring_project.demo.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,26 +18,25 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    // GET /api/students
+    // GET /api/students (ADMIN only)
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<StudentResponseDto> getAllStudents() {
         return studentService.getAllStudents();
     }
 
-    // GET /api/students/{id}
+    @PreAuthorize("""
+        hasRole('ADMIN')
+        or @enrollmentSecurity.canAccessStudent(principal.teacherId, #id)
+        or @enrollmentSecurity.isSelfStudent(#id, principal.studentId)
+    """)
     @GetMapping("/{id}")
     public StudentResponseDto getStudentById(@PathVariable Long id) {
         return studentService.getStudentByIdOrThrow(id);
     }
 
-    // POST /api/students/save
-    @PostMapping("/save")
-    public ResponseEntity<StudentResponseDto> saveStudent(@RequestBody StudentRequestDto dto) {
-        StudentResponseDto saved = studentService.saveStudent(dto);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
-
     // PUT /api/students/{id}
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDto> updateStudent(
             @PathVariable Long id,
@@ -46,6 +46,7 @@ public class StudentController {
     }
 
     // DELETE /api/students/{id}
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);

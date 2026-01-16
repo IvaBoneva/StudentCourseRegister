@@ -1,8 +1,8 @@
 package com.tu.java_spring_project.demo.service;
 
-import com.tu.java_spring_project.demo.dto.EnrollmentGradeUpdateDto;
-import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
-import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentGradeUpdateDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentRequestDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.mapper.EnrollmentMapper;
 import com.tu.java_spring_project.demo.model.*;
 import com.tu.java_spring_project.demo.repository.*;

@@ -4,15 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tu.java_spring_project.demo.enums.AcademicYear;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "students")
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Student {
 
     @Id
@@ -44,10 +47,22 @@ public class Student {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name = "password")
+    private String password;
+
     @NotNull(message = "Academic year is required")
     @Enumerated(EnumType.STRING)
     @Column(name = "academic_year", nullable = false)
     private AcademicYear academicYear;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    boolean enabled;
+
+    @Column(unique = true)
+    String activationToken;
 
     // One Student -> Many Enrollments
     @OneToMany(mappedBy = "student")
