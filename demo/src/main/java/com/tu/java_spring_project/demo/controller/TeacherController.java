@@ -7,7 +7,6 @@ import com.tu.java_spring_project.demo.model.Role;
 import com.tu.java_spring_project.demo.model.Teacher;
 import com.tu.java_spring_project.demo.service.TeacherService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

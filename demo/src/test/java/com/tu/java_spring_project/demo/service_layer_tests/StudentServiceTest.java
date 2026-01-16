@@ -1,6 +1,5 @@
 package com.tu.java_spring_project.demo.service_layer_tests;
 
-
 import com.tu.java_spring_project.demo.dto.auth.student.StudentRegisterRequestDTO;
 import com.tu.java_spring_project.demo.exception.DuplicateResourceException;
 import com.tu.java_spring_project.demo.mapper.StudentMapper;
@@ -11,8 +10,6 @@ import com.tu.java_spring_project.demo.service.StudentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
