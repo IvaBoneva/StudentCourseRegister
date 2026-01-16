@@ -5,24 +5,29 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Description
-Spring Boot REST API за регистрация на студенти за курсове.  
-Позволява:
-- CRUD операции със студенти и преподаватели
-- Създаване и управление на курсове и зали
-- Регистрация на студенти за курсове
-- JWT базирана автентикация и авторизация
+Spring Boot REST API за управление на учебен процес. Системата позволява администрация на студенти, преподаватели и курсове, като включва функционалност за резервация на зали и автоматизирано записване за курсове.
+
+Основни възможности:
+Управление на ресурси: Пълен CRUD за студенти, преподаватели, курсове и зали.
+
+Записване: Функционалност за записване на студенти в специфични курсове с проследяване на оценки.
+
+Сигурност: JWT автентикация с три нива на достъп (ADMIN, TEACHER, STUDENT).
+
+Документация: Пълна интерактивна документация чрез Swagger UI.
 
 ---
 
 ## Technologies
-- **Java 17**
-- **Spring Boot 3**
-- **PostgreSQL**
-- **Spring Data JPA**
-- **Spring Security (JWT)**
-- **Maven**
-- **Swagger/OpenAPI**## API Endpoints
+Backend: Java 17, Spring Boot 3
 
+Database: PostgreSQL, Spring Data JPA
+
+Security: Spring Security, JWT (JSON Web Tokens)
+
+API: REST, Swagger/OpenAPI
+
+Build Tool: Maven
 ---
 
 Swagger UI за тестване на API е достъпен на:
@@ -34,7 +39,7 @@ http://localhost:8080/swagger-ui/index.html
 ## Setup / Installation
 
 1. **Клонирай репото:**
-git clone [https://github.com/yourusername/student-course-register.git](https://github.com/IvaBoneva/StudentCourseRegister.git)
+git clone https://github.com/IvaBoneva/StudentCourseRegister.git
 cd student-course-register
 
 2. **Създай локална база данни PostgreSQL**
