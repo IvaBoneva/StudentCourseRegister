@@ -17,7 +17,7 @@ public class TeacherPrincipal implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<GrantedAuthority> getAuthorities() {
         return List.of(
                 new SimpleGrantedAuthority("ROLE_" + teacher.getRole().name())
         );

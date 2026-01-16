@@ -1,11 +1,8 @@
 package com.tu.java_spring_project.demo.service_layer_tests;
 
-import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentRequestDto;
 import com.tu.java_spring_project.demo.mapper.EnrollmentMapper;
-import com.tu.java_spring_project.demo.model.Course;
-import com.tu.java_spring_project.demo.model.Enrollment;
-import com.tu.java_spring_project.demo.model.Student;
-import com.tu.java_spring_project.demo.model.Teacher;
+import com.tu.java_spring_project.demo.model.*;
 import com.tu.java_spring_project.demo.repository.CourseRepo;
 import com.tu.java_spring_project.demo.repository.EnrollmentRepo;
 import com.tu.java_spring_project.demo.repository.StudentRepo;
@@ -54,6 +51,10 @@ class EnrollmentServiceTest {
 
         Course course = new Course();
         course.setCourseName("AI Learning");
+
+        Room room = new Room();
+        room.setCapacity(30);
+        course.setRoom(room);
 
         Teacher teacher = new Teacher();
         teacher.setId(1L);

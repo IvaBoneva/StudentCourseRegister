@@ -1,5 +1,6 @@
 package com.tu.java_spring_project.demo.repository_tests;
 
+import com.tu.java_spring_project.demo.model.Role;
 import com.tu.java_spring_project.demo.model.Teacher;
 import com.tu.java_spring_project.demo.repository.TeacherRepo;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ class TeacherRepoTest {
         teacher.setFirstName("Ivan");
         teacher.setLastName("Ivanov");
         teacher.setEmail("ivan@example.com");
+        teacher.setRole(Role.TEACHER);
 
         teacherRepo.save(teacher);
 

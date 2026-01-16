@@ -1,16 +1,20 @@
 package com.tu.java_spring_project.demo.controller_tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tu.java_spring_project.demo.config.security.JwtAuthFilter;
+import com.tu.java_spring_project.demo.config.security.JwtProvider;
 import com.tu.java_spring_project.demo.controller.EnrollmentController;
-import com.tu.java_spring_project.demo.dto.EnrollmentGradeUpdateDto;
-import com.tu.java_spring_project.demo.dto.EnrollmentRequestDto;
-import com.tu.java_spring_project.demo.dto.EnrollmentResponseDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentGradeUpdateDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentRequestDto;
+import com.tu.java_spring_project.demo.dto.enrollment.EnrollmentResponseDto;
 import com.tu.java_spring_project.demo.service.EnrollmentService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,6 +24,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(EnrollmentController.class)
 class EnrollmentControllerTest {
 
@@ -29,11 +34,20 @@ class EnrollmentControllerTest {
     @MockitoBean
     private EnrollmentService enrollmentService;
 
+    @MockitoBean
+    private JwtProvider jwtProvider;
+
+
+    @MockitoBean
+    private JwtAuthFilter jwtAuthFilter;
+
+
     @Autowired
     private ObjectMapper objectMapper;
 
     // ================= createEnrollment =================
     @Test
+    @WithMockUser(username="md@example.com", roles={"ADMIN"})
     void createEnrollment_returnsCreatedDto() throws Exception {
         EnrollmentRequestDto requestDto = new EnrollmentRequestDto(
                 "901234577",      // studentFacultyNumber

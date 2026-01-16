@@ -1,6 +1,7 @@
 package com.tu.java_spring_project.demo.repository_tests;
 
 import com.tu.java_spring_project.demo.enums.AcademicYear;
+import com.tu.java_spring_project.demo.model.Role;
 import com.tu.java_spring_project.demo.model.Student;
 import com.tu.java_spring_project.demo.repository.StudentRepo;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ class StudentRepoTest2 {
         student.setFacultyNumber("450067890");
         student.setEmail("kanevS@example.com");
         student.setAcademicYear(AcademicYear.THIRD);
+        student.setRole(Role.STUDENT);
 
         studentRepo.save(student);
 
