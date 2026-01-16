@@ -34,5 +34,7 @@ public interface StudentRepo extends JpaRepository<Student, Long> {
 
     boolean existsByFacultyNumber(String facultyNumber);
 
+    boolean existsByEmail(String email);
+
     Optional<Student> findByActivationToken(String activationToken);
 }

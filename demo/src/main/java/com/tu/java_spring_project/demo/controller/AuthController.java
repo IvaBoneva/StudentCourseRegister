@@ -143,5 +143,34 @@ public class AuthController {
 
         return ResponseEntity.ok(new StudentLoginResponseDTO(token));
     }
+
+    @PostMapping("/change-password/teacher")
+    public ResponseEntity<Void> changeTeacherPassword(
+            @RequestBody @Valid ChangePasswordRequestDTO request) {
+
+        teacherService.changePasswordForTeacher(
+                request.identifier(),
+                request.oldPassword(),
+                request.newPassword(),
+                passwordEncoder
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/change-password/student")
+    public ResponseEntity<Void> changeStudentPassword(
+            @RequestBody @Valid ChangePasswordRequestDTO request) {
+
+        studentService.changePasswordForStudent(
+                request.identifier(),
+                request.oldPassword(),
+                request.newPassword(),
+                passwordEncoder
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
 }
 

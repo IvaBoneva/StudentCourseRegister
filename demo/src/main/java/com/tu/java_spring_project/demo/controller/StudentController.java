@@ -26,10 +26,9 @@ public class StudentController {
     }
 
     @PreAuthorize("""
-        hasRole('ADMIN')
-        or @enrollmentSecurity.canAccessStudent(principal.teacherId, #id)
-        or @enrollmentSecurity.isSelfStudent(#id, principal.studentId)
-    """)
+    hasRole('ADMIN')
+    or @enrollmentSecurity.canAccessStudent(principal, #id)
+""")
     @GetMapping("/{id}")
     public StudentResponseDto getStudentById(@PathVariable Long id) {
         return studentService.getStudentByIdOrThrow(id);

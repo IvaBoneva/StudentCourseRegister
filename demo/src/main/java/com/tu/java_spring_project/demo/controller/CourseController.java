@@ -27,8 +27,8 @@ public class CourseController {
 
     // GET /api/courses/{id}
     @PreAuthorize("""
-    hasRole('ADMIN') 
-    or @enrollmentSecurity.isTeacherOfCourse(principal.teacherId, #id)
+    hasRole('ADMIN')
+    or @enrollmentSecurity.canAccessCourse(principal, #id)
 """)
     @GetMapping("/{id}")
     public CourseResponseDto getCourseById(@PathVariable Long id) {
@@ -36,7 +36,10 @@ public class CourseController {
     }
 
     // GET all courses for a teacher
-    @PreAuthorize("hasRole('ADMIN') or principal.teacherId == #teacherId")
+    @PreAuthorize("""
+    hasRole('ADMIN')
+    or (hasRole('TEACHER') and principal.teacherId == #teacherId)
+""")
     @GetMapping("/teacher/{teacherId}")
     public List<CourseResponseDto> getCoursesByTeacher(@PathVariable Long teacherId) {
         return courseService.getCoursesByTeacherId(teacherId);

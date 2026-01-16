@@ -38,6 +38,10 @@ public class EnrollmentService {
         Course course = courseRepo.findCourseByName(dto.courseName())
                 .orElseThrow(() -> new IllegalArgumentException("Course does not exist"));
 
+        if (!course.getTeachers().contains(teacher)) {
+            course.getTeachers().add(teacher);
+        }
+
         if (enrollmentRepo.existsByStudentAndCourse(student, course)) {
             throw new IllegalArgumentException("Student is already enrolled in this course");
         }

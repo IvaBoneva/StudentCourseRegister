@@ -20,7 +20,13 @@ public interface CourseRepo extends JpaRepository<Course, Long> {
     Optional<Course> findCourseByName(@Param("courseName") String courseName);
 
     // All courses led by a teacher
-    List<Course> findAllByTeachersId(Long teacherId);
+    @Query("""
+        select c from Course c
+        join c.teachers t
+        where t.id = :teacherId
+     """)
+    List<Course> findAllByTeachersId(@Param("teacherId") Long teacherId);
+
 
     // Used for security checks
     boolean existsByIdAndTeachersId(Long courseId, Long teacherId);

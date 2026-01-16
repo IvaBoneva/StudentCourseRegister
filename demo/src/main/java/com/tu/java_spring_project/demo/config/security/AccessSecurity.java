@@ -3,51 +3,69 @@ package com.tu.java_spring_project.demo.config.security;
 import com.tu.java_spring_project.demo.repository.CourseRepo;
 import com.tu.java_spring_project.demo.repository.EnrollmentRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 @Component("enrollmentSecurity")
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequiredArgsConstructor
 public class AccessSecurity {
 
-        private final EnrollmentRepo enrollmentRepo;
-        private final CourseRepo courseRepo;
+    private final EnrollmentRepo enrollmentRepo;
+    private final CourseRepo courseRepo;
 
-    /**
-     * Returns true if the teacher leads the course in the given enrollment
-     */
-    public boolean isTeacherOfEnrollment(Long teacherId, Long enrollmentId) {
-        return enrollmentRepo.existsByIdAndTeacherId(enrollmentId, teacherId);
+    public boolean canAccessStudent(Object principal, Long studentId) {
+
+        if (principal instanceof TeacherPrincipal tp) {
+            return enrollmentRepo.existsByTeacherIdAndStudentId(
+                    tp.getTeacherId(), studentId
+            );
+        }
+
+        if (principal instanceof StudentPrincipal sp) {
+            return studentId != null && studentId.equals(sp.getStudentId());
+        }
+
+        return false;
     }
 
-    /**
-     * Returns true if the teacher teaches any course the student is enrolled in
-     */
-    public boolean canAccessStudent(Long teacherId, Long studentId) {
-        return enrollmentRepo.existsByTeacherIdAndStudentId(teacherId, studentId);
+    public boolean canAccessEnrollment(Object principal, Long enrollmentId) {
+
+        if (principal instanceof TeacherPrincipal tp) {
+            return enrollmentRepo.existsByIdAndTeacherId(
+                    enrollmentId, tp.getTeacherId()
+            );
+        }
+
+        if (principal instanceof StudentPrincipal sp) {
+            return enrollmentRepo.existsByIdAndStudentId(
+                    enrollmentId, sp.getStudentId()
+            );
+        }
+
+        return false;
     }
 
-    /**
-     * Returns true if the student is accessing their own data
-     */
-    public boolean isSelfStudent(Long studentId, Long principalStudentId) {
-        return studentId != null && studentId.equals(principalStudentId);
+    public boolean canAccessCourse(Object principal, Long courseId) {
+
+        if (principal instanceof TeacherPrincipal tp) {
+            return courseRepo.existsByIdAndTeachersId(
+                    courseId, tp.getTeacherId()
+            );
+        }
+
+        return false;
     }
 
-    /**
-     * Returns true if the teacher leads the given course
-     */
-    public boolean isTeacherOfCourse(Long teacherId, Long courseId) {
-        return courseRepo.existsByIdAndTeachersId(courseId, teacherId);
+    public boolean canAccessTeacher(Object principal, Long teacherId) {
+        if (principal instanceof TeacherPrincipal tp) {
+            // Teacher can access their own data
+            return tp.getTeacherId().equals(teacherId);
+        }
+        // Admins are handled in PreAuthorize itself
+        return false;
     }
-
-
-    /**
-     * Returns true if the enrollment belongs to the student
-     */
-    public boolean isStudentOfEnrollment(Long studentId, Long enrollmentId) {
-        return enrollmentRepo.existsByIdAndStudentId(enrollmentId, studentId);
-    }
-
 
 }
 

@@ -9,6 +9,7 @@ import com.tu.java_spring_project.demo.model.Role;
 import com.tu.java_spring_project.demo.model.Student;
 import com.tu.java_spring_project.demo.repository.StudentRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,5 +88,19 @@ public class StudentService {
 
         return studentRepo.save(student);
     }
+
+    @Transactional
+    public void changePasswordForStudent(String facultyNumber, String oldPassword, String newPassword, PasswordEncoder passwordEncoder) {
+        Student student = studentRepo.findStudentByFacultyNumber(facultyNumber)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with faculty number: " + facultyNumber));
+
+        if (!passwordEncoder.matches(oldPassword, student.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+
+        student.setPassword(passwordEncoder.encode(newPassword));
+        studentRepo.save(student);
+    }
+
 
 }

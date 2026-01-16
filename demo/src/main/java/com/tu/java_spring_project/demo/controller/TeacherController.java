@@ -29,7 +29,7 @@ public class TeacherController {
     }
 
     // GET /api/teachers/{id} (ADMIN or owner)
-    @PreAuthorize("hasRole('ADMIN') or principal.teacherId == #id")
+    @PreAuthorize("hasRole('ADMIN') or @enrollmentSecurity.canAccessTeacher(principal, #id)")
     @GetMapping("/{id}")
     public TeacherResponseDto getTeacherById(@PathVariable Long id) {
         return teacherService.getTeacherByIdOrThrow(id);

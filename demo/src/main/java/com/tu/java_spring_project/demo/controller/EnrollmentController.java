@@ -37,8 +37,7 @@ public class EnrollmentController {
 
     @PreAuthorize("""
     hasRole('ADMIN')
-    or @enrollmentSecurity.isTeacherOfEnrollment(principal.teacherId, #id)
-    or @enrollmentSecurity.isStudentOfEnrollment(principal.studentId, #id)
+    or @enrollmentSecurity.canAccessEnrollment(principal, #id)
 """)
     @GetMapping("/{id}")
     public EnrollmentResponseDto getEnrollmentById(@PathVariable Long id) {
@@ -53,7 +52,10 @@ public class EnrollmentController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @enrollmentSecurity.isTeacherOfEnrollment(principal.teacherId, #id)")
+    @PreAuthorize("""
+    hasRole('ADMIN')
+    or @enrollmentSecurity.canAccessEnrollment(principal, #id)
+""")
     @PutMapping("/{id}")
     public ResponseEntity<EnrollmentResponseDto> updateGrade(
             @PathVariable Long id,
