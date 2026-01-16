@@ -1,7 +1,7 @@
 package com.tu.java_spring_project.demo.service;
 
-import com.tu.java_spring_project.demo.dto.RoomRequestDto;
-import com.tu.java_spring_project.demo.dto.RoomResponseDto;
+import com.tu.java_spring_project.demo.dto.room.RoomRequestDto;
+import com.tu.java_spring_project.demo.dto.room.RoomResponseDto;
 import com.tu.java_spring_project.demo.mapper.RoomMapper;
 import com.tu.java_spring_project.demo.model.Room;
 import com.tu.java_spring_project.demo.repository.RoomRepo;

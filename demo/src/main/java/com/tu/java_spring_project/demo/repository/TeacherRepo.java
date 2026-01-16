@@ -1,5 +1,6 @@
 package com.tu.java_spring_project.demo.repository;
 
+import com.tu.java_spring_project.demo.dto.auth.ActivateRequestDTO;
 import com.tu.java_spring_project.demo.model.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,10 @@ public interface TeacherRepo extends JpaRepository<Teacher, Long> {
             @Param("firstName") String firstName,
             @Param("lastName") String lastName
     );
+
+    Optional<Teacher> findTeacherByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    Optional<Teacher> findByActivationToken(String activationToken);
 }

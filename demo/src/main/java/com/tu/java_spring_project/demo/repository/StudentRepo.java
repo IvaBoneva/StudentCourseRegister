@@ -1,6 +1,7 @@
 package com.tu.java_spring_project.demo.repository;
 
 import com.tu.java_spring_project.demo.model.Student;
+import com.tu.java_spring_project.demo.model.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,8 @@ public interface StudentRepo extends JpaRepository<Student, Long> {
     Optional<Student> findStudentByFacultyNumber(
             @Param("facultyNumber") String facultyNumber
     );
+
+    boolean existsByFacultyNumber(String facultyNumber);
+
+    Optional<Student> findByActivationToken(String activationToken);
 }

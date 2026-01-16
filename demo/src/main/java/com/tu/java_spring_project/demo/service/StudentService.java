@@ -1,8 +1,11 @@
 package com.tu.java_spring_project.demo.service;
 
-import com.tu.java_spring_project.demo.dto.StudentRequestDto;
-import com.tu.java_spring_project.demo.dto.StudentResponseDto;
+import com.tu.java_spring_project.demo.dto.auth.student.StudentRegisterRequestDTO;
+import com.tu.java_spring_project.demo.dto.student.StudentRequestDto;
+import com.tu.java_spring_project.demo.dto.student.StudentResponseDto;
+import com.tu.java_spring_project.demo.exception.DuplicateResourceException;
 import com.tu.java_spring_project.demo.mapper.StudentMapper;
+import com.tu.java_spring_project.demo.model.Role;
 import com.tu.java_spring_project.demo.model.Student;
 import com.tu.java_spring_project.demo.repository.StudentRepo;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +69,23 @@ public class StudentService {
             throw new NoSuchElementException("Student not found with id " + id);
         }
         studentRepo.deleteById(id);
+    }
+
+    @Transactional
+    public Student registerStudent (StudentRegisterRequestDTO registerRequestDTO) {
+
+        if (studentRepo.existsByFacultyNumber(registerRequestDTO.facultyNumber())) {
+            throw new DuplicateResourceException(Student.class, "facultyNumber", registerRequestDTO.facultyNumber());
+        }
+
+        Student student = studentMapper.toStudent(registerRequestDTO);
+
+        student.setRole(Role.STUDENT);
+        student.setEnabled(false);
+        student.setActivationToken(UUID.randomUUID().toString());
+        student.setPassword(null);
+
+        return studentRepo.save(student);
     }
 
 }

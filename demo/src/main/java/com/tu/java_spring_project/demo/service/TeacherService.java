@@ -1,24 +1,30 @@
 package com.tu.java_spring_project.demo.service;
 
-import com.tu.java_spring_project.demo.dto.StudentRequestDto;
-import com.tu.java_spring_project.demo.dto.StudentResponseDto;
-import com.tu.java_spring_project.demo.dto.TeacherRequestDto;
-import com.tu.java_spring_project.demo.dto.TeacherResponseDto;
+import com.tu.java_spring_project.demo.config.security.TeacherPrincipal;
+import com.tu.java_spring_project.demo.dto.auth.teacher.TeacherRegisterRequestDTO;
+import com.tu.java_spring_project.demo.dto.teacher.TeacherRequestDto;
+import com.tu.java_spring_project.demo.dto.teacher.TeacherResponseDto;
+import com.tu.java_spring_project.demo.exception.DuplicateResourceException;
 import com.tu.java_spring_project.demo.mapper.TeacherMapper;
-import com.tu.java_spring_project.demo.model.Student;
+import com.tu.java_spring_project.demo.model.Role;
 import com.tu.java_spring_project.demo.model.Teacher;
 import com.tu.java_spring_project.demo.repository.TeacherRepo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class TeacherService {
 
     private final TeacherRepo teacherRepo;
@@ -67,5 +73,43 @@ public class TeacherService {
             throw new NoSuchElementException("Teacher not found with id " + id);
         }
         teacherRepo.deleteById(id);
+    }
+
+    @Transactional
+    public Teacher registerTeacher(TeacherRegisterRequestDTO registerRequestDTO) {
+
+        if (teacherRepo.existsByEmail(registerRequestDTO.email())) {
+            throw new DuplicateResourceException(
+                    Teacher.class, "email", registerRequestDTO.email()
+            );
+        }
+
+        Teacher teacher = teacherMapper.toTeacher(registerRequestDTO);
+
+        teacher.setRole(Role.TEACHER);
+        teacher.setEnabled(false);
+        teacher.setActivationToken(UUID.randomUUID().toString());
+        teacher.setPassword(null);
+
+        return teacherRepo.save(teacher);
+    }
+
+    @Transactional
+    public Teacher patchTeacherRole(Long teacherId, Role newRole) {
+
+        Teacher teacher = teacherRepo.findById(teacherId)
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        TeacherPrincipal principal = (TeacherPrincipal) auth.getPrincipal();
+        Long currentUserId = principal.getTeacherId();
+
+        if (teacher.getId().equals(currentUserId)) {
+            throw new IllegalStateException("You cannot change your own role");
+        }
+
+        teacher.setRole(newRole);
+        return teacherRepo.save(teacher);
     }
 }

@@ -1,11 +1,12 @@
 package com.tu.java_spring_project.demo.controller;
 
-import com.tu.java_spring_project.demo.dto.RoomRequestDto;
-import com.tu.java_spring_project.demo.dto.RoomResponseDto;
+import com.tu.java_spring_project.demo.dto.room.RoomRequestDto;
+import com.tu.java_spring_project.demo.dto.room.RoomResponseDto;
 import com.tu.java_spring_project.demo.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/rooms")
+@PreAuthorize("hasRole('ADMIN')")
 public class RoomController {
 
     private final RoomService roomService;

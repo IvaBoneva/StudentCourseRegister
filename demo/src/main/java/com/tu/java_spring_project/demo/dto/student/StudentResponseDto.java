@@ -1,4 +1,4 @@
-package com.tu.java_spring_project.demo.dto;
+package com.tu.java_spring_project.demo.dto.student;
 
 import com.tu.java_spring_project.demo.enums.AcademicYear;
 import java.util.List;
