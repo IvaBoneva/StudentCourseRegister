@@ -34,7 +34,7 @@ http://localhost:8080/swagger-ui/index.html
 ## Setup / Installation
 
 1. **Клонирай репото:**
-git clone https://github.com/yourusername/student-course-register.git
+git clone [https://github.com/yourusername/student-course-register.git](https://github.com/IvaBoneva/StudentCourseRegister.git)
 cd student-course-register
 
 2. **Създай локална база данни PostgreSQL**
