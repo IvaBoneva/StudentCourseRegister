@@ -39,6 +39,7 @@ public interface CourseMapper {
                 .map(enrollment -> enrollment.getStudent().getFirstName()
                         + " "
                         + enrollment.getStudent().getLastName())
+                .distinct()
                 .collect(Collectors.toList());
     }
 
@@ -50,6 +51,7 @@ public interface CourseMapper {
                 .map(enrollment -> enrollment.getTeacher().getFirstName()
                         + " "
                         + enrollment.getTeacher().getLastName())
+                .distinct()
                 .collect(Collectors.toList());
     }
 
