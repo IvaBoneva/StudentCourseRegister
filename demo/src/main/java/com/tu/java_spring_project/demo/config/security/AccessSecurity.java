@@ -1,14 +1,16 @@
 package com.tu.java_spring_project.demo.config.security;
 
+import com.tu.java_spring_project.demo.repository.CourseRepo;
 import com.tu.java_spring_project.demo.repository.EnrollmentRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component("enrollmentSecurity")
 @RequiredArgsConstructor
-public class EnrollmentSecurity {
+public class AccessSecurity {
 
         private final EnrollmentRepo enrollmentRepo;
+        private final CourseRepo courseRepo;
 
     /**
      * Returns true if the teacher leads the course in the given enrollment
@@ -35,8 +37,9 @@ public class EnrollmentSecurity {
      * Returns true if the teacher leads the given course
      */
     public boolean isTeacherOfCourse(Long teacherId, Long courseId) {
-        return enrollmentRepo.existsByCourseIdAndTeacherId(courseId, teacherId);
+        return courseRepo.existsByIdAndTeachersId(courseId, teacherId);
     }
+
 
     /**
      * Returns true if the enrollment belongs to the student

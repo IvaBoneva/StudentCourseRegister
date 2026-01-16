@@ -27,7 +27,7 @@ public class CourseController {
 
     // GET /api/courses/{id}
     @PreAuthorize("""
-    hasRole('ADMIN')
+    hasRole('ADMIN') 
     or @enrollmentSecurity.isTeacherOfCourse(principal.teacherId, #id)
 """)
     @GetMapping("/{id}")

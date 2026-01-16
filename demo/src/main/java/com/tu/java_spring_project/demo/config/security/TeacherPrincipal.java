@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-
 public class TeacherPrincipal implements UserDetails {
 
     private final Teacher teacher;

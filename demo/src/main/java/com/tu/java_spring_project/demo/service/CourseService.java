@@ -78,7 +78,7 @@ public class CourseService {
     }
 
     public List<CourseResponseDto> getCoursesByTeacherId(Long teacherId) {
-        return courseRepo.findAllByTeacherId(teacherId)
+        return courseRepo.findAllByTeachersId(teacherId)
                 .stream()
                 .map(courseMapper::toCourseResponseDto)
                 .toList();
